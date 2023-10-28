@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import com.employeeapp.employee.repository.EmployeeRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -19,4 +20,45 @@ public class EmployeeServiceImpl implements EmployeeService {
     public List<Employee> getAllEmployees() {
         return this.employeeRepository.findAll();
     }
+
+    @Override
+    public Employee createNewEmployee(Employee employee) {
+        return this.employeeRepository.save(employee);
+    }
+
+    @Override
+    public EmployeeRequest getEmployeeById(long id) {
+        Optional<Employee> employeeOptional = this.employeeRepository.findByEmployeeId(id); //.orElseThrow(() -> new PostException(PostErrorResult.ID_NOT_FOUND));
+        Employee employee = null;
+        if (employeeOptional.isPresent()) {
+            employee = employeeOptional.get();
+            //return ResponseEntity.ok(employee);
+        } else {
+            throw new RuntimeException("Employee not found for id: " + id);
+        }
+        return employee;
+    }
+
+    @Override
+    public void deleteEmployeeById(long id) {
+        this.employeeRepository.deleteById(id);
+    }
+
+    @Override
+    public void updateEmployee(long id, Employee newEmployeeDetails) {
+        Employee updatedEmployee = getEmployeeById(id);
+        updatedEmployee = newEmployeeDetails;
+        this.employeeRepository.save(updatedEmployee);
+    }
+
+    private Employee updateFields(Employee employee,Employee newEmployeeDetails) {
+        employee.setFirstName(newEmployeeDetails.getFirstName());
+        employee.setLastName(newEmployeeDetails.getLastName());
+        employee.setBirthDate(newEmployeeDetails.getBirthDate());
+        employee.setEmailAddress();
+        employee.
+
+        return Employee
+    }
+
 }

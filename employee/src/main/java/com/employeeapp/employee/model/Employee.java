@@ -6,8 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import javax.validation.constraints.*;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import net.bytebuddy.asm.Advice;
 import org.hibernate.annotations.NotFound;
 
@@ -22,6 +21,9 @@ import java.time.LocalDate;
 @Table(name = "employees")
 @Getter
 @Setter
+@Data
+@AllArgsConstructor(staticName = "build")
+@NoArgsConstructor
 //@SecondaryTables({
 //    @SecondaryTable(name = "contacts", @PrimaryKeyJoinColumn(name = "id", referencedColumnName = "employee_id")),
 //    @SecondaryTable(name = "work", @PrimaryKeyJoinColumn(name = "id", referencedColumnName = "employee_id"))
@@ -84,9 +86,6 @@ public class Employee  { //implements Serializable
 //    @OneToOne(mappedBy = "employees")
 //    WorkDetails workDetails;
 
-    public Employee(){
-
-    }
 
     //@transactional? I forgot the name
 
