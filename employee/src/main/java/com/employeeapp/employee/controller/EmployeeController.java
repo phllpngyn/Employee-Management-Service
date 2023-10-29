@@ -10,6 +10,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class EmployeeController {
@@ -45,13 +46,12 @@ public class EmployeeController {
     @PutMapping(path = "/employees/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     private ResponseEntity<Void> updateEmployee(@PathVariable long id, @RequestBody Employee updatedEmployee) {
         this.employeeService.updateEmployee(id, updatedEmployee);
-
-        //return 204 no content OR 200; dbl check if this is right
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping(path="/employees/{id})")
+    @DeleteMapping(path="/employees/{id}")
     private ResponseEntity<Void> deleteEmployee(@PathVariable long id) {
+
         try {
             this.employeeService.deleteEmployeeById(id);
             return ResponseEntity.noContent().build();

@@ -1,10 +1,12 @@
 package com.employeeapp.employee.service;
 
 import com.employeeapp.employee.model.Employee;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import com.employeeapp.employee.repository.EmployeeRepository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -27,7 +29,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public EmployeeRequest getEmployeeById(long id) {
+    public Employee getEmployeeById(long id) {
         Optional<Employee> employeeOptional = this.employeeRepository.findByEmployeeId(id); //.orElseThrow(() -> new PostException(PostErrorResult.ID_NOT_FOUND));
         Employee employee = null;
         if (employeeOptional.isPresent()) {
@@ -41,24 +43,25 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void deleteEmployeeById(long id) {
-        this.employeeRepository.deleteById(id);
+        this.employeeRepository.deleteByEmployeeId(id);
     }
 
     @Override
     public void updateEmployee(long id, Employee newEmployeeDetails) {
         Employee updatedEmployee = getEmployeeById(id);
-        updatedEmployee = newEmployeeDetails;
+        BeanUtils.copyProperties(newEmployeeDetails, updatedEmployee, "employeeId");
+//        updatedEmployee.setEmployeeId(id);
         this.employeeRepository.save(updatedEmployee);
     }
 
-    private Employee updateFields(Employee employee,Employee newEmployeeDetails) {
-        employee.setFirstName(newEmployeeDetails.getFirstName());
-        employee.setLastName(newEmployeeDetails.getLastName());
-        employee.setBirthDate(newEmployeeDetails.getBirthDate());
-        employee.setEmailAddress();
-        employee.
-
-        return Employee
-    }
+//    private Employee updateFields(Employee employee,Employee newEmployeeDetails) {
+//        employee.setFirstName(newEmployeeDetails.getFirstName());
+//        employee.setLastName(newEmployeeDetails.getLastName());
+//        employee.setBirthDate(newEmployeeDetails.getBirthDate());
+//        employee.setEmailAddress(newEmployeeDetails.get);
+//        employee.
+//
+//        return Employee
+//    }
 
 }

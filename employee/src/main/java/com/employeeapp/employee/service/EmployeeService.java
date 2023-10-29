@@ -4,14 +4,14 @@ import com.employeeapp.employee.dto.EmployeeRequest;
 import com.employeeapp.employee.model.Employee;
 
 import java.util.List;
+import java.util.Map;
 
 public interface EmployeeService {
-    List<EmployeeRequest> getAllEmployees();
+    List<Employee> getAllEmployees();
 
-    EmployeeRequest createNewEmployee(Employee employee);
+    Employee createNewEmployee(Employee employee);
 
-    EmployeeRequest getEmployeeById(long id);
-
+    Employee getEmployeeById(long id);
     void updateEmployee(long id, Employee employee);
 
     void deleteEmployeeById(long id);
