@@ -1,0 +1,193 @@
+swagger: '2.0'
+info:
+  description: This is a employee management api
+  version: 1.0.0
+  title: Employee Management Service
+consumes:
+  - application/json
+produces:
+  - application/json
+tags:
+  - name: Employee
+    description: Employee Management
+schemes:
+  - http
+paths:
+  /employees:
+    post:
+      tags:
+        - employee
+      summary: Add a new employee to the system
+      description: Creates a new employee in the system
+      operationId: createNewEmployee
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: newEmployee
+          description: Employee object that needs to be added to the system
+          required: true
+          schema:
+            $ref: '#/definitions/Employee'
+      responses:
+        '201':
+          description: Successfully created
+          schema:
+            $ref: '#/definitions/Employee'
+        '400':
+          description: Bad request
+    get:
+      tags:
+        - employees
+      summary: Retrieve all employees
+      description: Retrieve all employees
+      operationId: getAllEmployees
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Successful retrieval of all employees
+          schema:
+            $ref: '#/definitions/Employee'
+        '400':
+          description: Bad request
+
+
+
+  /employees/{id}:
+    get:
+      tags:
+        - employees
+      summary: Retrieve a single employee by id
+      description: Retrieve a single employee
+      operationId: getEmployeeById
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: Id of the employee to get from the employee management system
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Successful retrieval of Employee
+          schema:
+            $ref: '#/definitions/Employee'
+        '400':
+          description: Bad request
+        '404':
+          description: Employee not found
+    delete:
+      tags:
+        - employee
+      summary: Deletes employee from system
+      description: Deletes employee from system by Id
+      operationId: deleteEmployee
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: Id of the employee to get from the employee management system
+          required: true
+          schema:
+            $ref: '#/definitions/Employee'
+      responses:
+        '200':
+          description: Successfully deleted
+          schema:
+            $ref: '#/definitions/Employee'
+        '400':
+          description: Bad request
+    put:
+      tags:
+        - employee
+      summary: Updates employee in employee management system
+      description: Updates employee in system based off the ID
+      operationId: updateEmployee
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: Id of the employee to get from the employee management system
+          required: true
+          schema:
+            $ref: '#/definitions/Employee'
+        - in: body
+          name: updatedEmployee
+          description: Employee object that needs to be added to the system
+          required: true
+          schema:
+            $ref: '#/definitions/Employee'
+      responses:
+        '200':
+          description: Successfully deleted
+          schema:
+            $ref: '#/definitions/Employee'
+        '400':
+          description: Bad request
+definitions:
+  Employee:
+    title: Employee
+    description: An Employee
+    required:
+      - firstName
+      - lastName
+      -
+    properties:
+      employeeId:
+        type: integer
+        description: Employee's Identification
+      firstName:
+        type: string
+        description: First name of employee
+        example: John
+      lastName:
+        type: string
+        description: Last name of employee
+      emailAddress:
+        type: string
+        description: email address of employee
+      phone:
+        type: string
+        description: phone number of employee
+      birthDate:
+        type: object
+        description: birth date of employee
+      jobTitle:
+        type: string
+        description: job title of employee
+      department:
+        type: string
+        description: Employee's department at workplace
+      location:
+        type: string
+        description: Employee's work location
+      startDate:
+        type: string
+        description: Employee's start date
+      managerReporting:
+        type: string
+        description: Employee's reporting manager
+
+  EmployeeResponse:
+    type: object
+    description: Response object contains all the Employees
+    properties:
+      cats:
+        type: array
+        items:
+          $ref: '#/definitions/Employee'
+        description: List of Employees

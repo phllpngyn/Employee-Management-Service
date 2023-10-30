@@ -1,14 +1,18 @@
 package com.employeeapp.employee.service;
 
 import com.employeeapp.employee.model.Employee;
+import com.employeeapp.employee.model.RequestException;
+import com.employeeapp.employee.model.RequestErrorResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import com.employeeapp.employee.repository.EmployeeRepository;
 
+import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
@@ -30,28 +34,35 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee getEmployeeById(long id) {
-        Optional<Employee> employeeOptional = this.employeeRepository.findByEmployeeId(id); //.orElseThrow(() -> new PostException(PostErrorResult.ID_NOT_FOUND));
         Employee employee = null;
-        if (employeeOptional.isPresent()) {
-            employee = employeeOptional.get();
-            //return ResponseEntity.ok(employee);
-        } else {
-            throw new RuntimeException("Employee not found for id: " + id);
+        if (checkIdExists(id)) {
+            Optional<Employee> employeeOptional = this.employeeRepository.findByEmployeeId(id);
+            if (employeeOptional.isPresent()) {
+                employee = employeeOptional.get();
+            } else {
+                throw new RequestException(RequestErrorResponse.ID_NOT_FOUND);
+            }
         }
         return employee;
     }
 
     @Override
+    @Transactional
     public void deleteEmployeeById(long id) {
-        this.employeeRepository.deleteByEmployeeId(id);
+        if (checkIdExists(id)) {
+            this.employeeRepository.deleteByEmployeeId(id);
+        }
     }
 
     @Override
-    public void updateEmployee(long id, Employee newEmployeeDetails) {
-        Employee updatedEmployee = getEmployeeById(id);
-        BeanUtils.copyProperties(newEmployeeDetails, updatedEmployee, "employeeId");
-//        updatedEmployee.setEmployeeId(id);
-        this.employeeRepository.save(updatedEmployee);
+    public Employee updateEmployee(long id, Employee newEmployeeDetails) {
+        Employee employee = null;
+        if (checkIdExists(id)) {
+            Employee updatedEmployee = getEmployeeById(id);
+            BeanUtils.copyProperties(newEmployeeDetails, updatedEmployee, "employeeId");
+            employee = this.employeeRepository.save(updatedEmployee);
+        }
+        return employee;
     }
 
 //    private Employee updateFields(Employee employee,Employee newEmployeeDetails) {
@@ -64,4 +75,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 //        return Employee
 //    }
 
+    public boolean checkIdExists(long id) throws RequestException {
+        if (!employeeRepository.existsById(id)) {
+            log.warn("There was issue finding id: " + id);
+            throw new RequestException(RequestErrorResponse.ID_NOT_FOUND);
+        }
+        return true;
+    }
 }

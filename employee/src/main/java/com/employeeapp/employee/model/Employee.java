@@ -1,5 +1,6 @@
 package com.employeeapp.employee.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
@@ -22,7 +23,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Data
-@AllArgsConstructor(staticName = "build")
+@AllArgsConstructor(staticName = "of")
 @NoArgsConstructor
 //@SecondaryTables({
 //    @SecondaryTable(name = "contacts", @PrimaryKeyJoinColumn(name = "id", referencedColumnName = "employee_id")),
@@ -36,6 +37,7 @@ public class Employee  { //implements Serializable
     @Column(name = "employee_id")
     private long employeeId;
 
+
     @NotBlank(message = "First Name shouldn't be null")
     @Column(name = "first_name")
     private String firstName;
@@ -45,7 +47,8 @@ public class Employee  { //implements Serializable
     private String lastName;
 
 
-    @NotNull
+    @NotNull(message = "Birth date can't be null")
+    @JsonFormat(pattern="yyyy-MM-dd")
     @Column(name = "birth_date")
     private LocalDate birthDate;
 
@@ -54,30 +57,33 @@ public class Employee  { //implements Serializable
     private String emailAddress;
 
     @NotBlank(message = "Phone Number can't be empty")
-    @Pattern(regexp = "^\\d{10}$")
+    @Pattern(regexp = "^\\d{10}$",
+            message = "Invalid Phone Number. Phone Number must be 10 digits with no spaces or special characters")
     @Column(name = "phone")
     private String phone;
 
-    @NotNull
+    @NotNull(message = "Job Title can't be null")
     @Column(name = "job_title")
     private String jobTitle;
 
-    @NotNull
+    @NotNull(message = "Department can't be null")
     @Column(name = "department")
     private String department;
 
-    @NotNull
+    @NotNull(message = "Location can't be null")
     @Column(name = "location")
     private String location;
 
-    @NotNull
+    @NotNull(message = "Start Date can't be null")
+    @JsonFormat(pattern="yyyy-MM-dd")
     @Column(name = "start_date")
     private LocalDate startDate;
 
     //make the manager id thats many to 1 to manager table
-    @NotNull
+    @NotNull(message = "Reporting Manager can't be null")
     @Column(name = "reporting_manager")
     private String reportingManager;
+
 
 
 //    @OneToOne(mappedBy = "employees")
