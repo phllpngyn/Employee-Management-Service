@@ -31,15 +31,22 @@ public class EmployeeServiceTest {
     @MockBean
     private EmployeeRepository repository;
 
+    Employee employee1 = Employee.of(1, "phillip", "nguyen", LocalDate.of(1966, Month.DECEMBER, 5), "phillip@gmail.com", "4429557115", "Software Engineer", "Information Technology",
+            "Baltimore", LocalDate.of(1999, Month.AUGUST, 1), "John Doe");
+    Employee employee2 = Employee.of(2, "john", "card", LocalDate.of(2001, Month.AUGUST, 20), "john@gmail.com", "7114454355", "Software Engineer", "Information Technology",
+            "Washington", LocalDate.of(2010, Month.JANUARY, 2), "John Doe");
+
+    Employee employee3 = Employee.of(3, "brian", "ham", LocalDate.of(1989, Month.AUGUST, 22), "brian@gmail.com", "4415890070", "Tech Sales", "Sales",
+            "New York", LocalDate.of(2008, Month.NOVEMBER, 22), "Cam Frane");
+
+
 
 
 
     @Test
     public void getAllEmployeesTest() {
         when(repository.findAll()).thenReturn(Stream
-                .of(Employee.of(1, "phillip", "nguyen", LocalDate.of(1966, Month.DECEMBER, 5), "john@gmail.com", "4429557115", "Software Engineer", "Information Technology",
-                                "Baltimore", LocalDate.of(1999, Month.AUGUST, 1), "John Doe"),
-                        Employee.of(1, "phillip", "nguyen", LocalDate.of(1966, Month.DECEMBER, 5), "john@gmail.com", "4429557115", "Software Engineer", "Information Technology",
+                .of(employee1, Employee.of(1, "phillip", "nguyen", LocalDate.of(1966, Month.DECEMBER, 5), "john@gmail.com", "4429557115", "Software Engineer", "Information Technology",
                                 "Baltimore", LocalDate.of(1999, Month.AUGUST, 1), "John Doe"))
                 .collect(Collectors.toList()));
         List<Employee> employees = employeeService.getAllEmployees();
@@ -68,6 +75,15 @@ public class EmployeeServiceTest {
     }
 
     @Test
+    public void createNewEmployee() {
+        when(repository.save(employee1)).thenReturn(employee1);
+        Employee employee = employeeService.createNewEmployee(employee1);
+        assertNotNull(employee);
+        assertEquals(employee1, employee);
+    }
+
+
+    @Test
     public void getEmployeeById() {
         long id = 1;
         when(repository.findByEmployeeId(1)).thenReturn(Optional.ofNullable(Employee.of(1, "phillip", "nguyen", LocalDate.of(1966, Month.DECEMBER, 5), "john@gmail.com", "4429557115", "Software Engineer", "Information Technology",
@@ -75,13 +91,11 @@ public class EmployeeServiceTest {
         when(repository.existsById(id)).thenReturn(true);
         Employee employee = employeeService.getEmployeeById(id);
         assertNotNull(employee);
-
     }
 
     @Test
     public void deleteEmployee() {
-        Employee employee = Employee.of(1, "phillip", "nguyen", LocalDate.of(1966, Month.DECEMBER, 5), "john@gmail.com", "4429557115", "Software Engineer", "Information Technology",
-                "Baltimore", LocalDate.of(1999, Month.AUGUST, 1), "John Doe");
+        Employee employee = employee1;
         when(repository.existsById(employee.getEmployeeId())).thenReturn(true);
         employeeService.deleteEmployeeById(employee.getEmployeeId());
         verify(repository, times(1)).deleteByEmployeeId(employee.getEmployeeId());

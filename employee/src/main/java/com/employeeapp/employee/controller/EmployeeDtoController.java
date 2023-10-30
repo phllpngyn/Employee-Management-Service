@@ -18,11 +18,11 @@ import java.util.List;
 @ApiOperation(value = "/employees", tags = "Employee Management Controller")
 @RestController
 @RequestMapping("/employees")
-public class EmployeeController {
+public class EmployeeDtoController {
 
     private EmployeeService employeeService ;
 
-    public EmployeeController(EmployeeService employeeService) {
+    public EmployeeDtoController(EmployeeService employeeService) {
         this.employeeService = employeeService;
     }
 

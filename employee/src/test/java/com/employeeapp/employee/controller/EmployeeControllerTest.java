@@ -1,12 +1,15 @@
 package com.employeeapp.employee.controller;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.Matchers.hasSize;
 
+import com.employeeapp.employee.model.RequestErrorResponse;
 import com.employeeapp.employee.model.RequestException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,7 +26,7 @@ import com.employeeapp.employee.model.Employee;
 import com.employeeapp.employee.repository.EmployeeRepository;
 import com.employeeapp.employee.service.EmployeeService;
 import org.hamcrest.CoreMatchers;
-
+import org.mockito.Mockito;
 
 
 
@@ -39,10 +42,11 @@ import java.time.Month;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
+import static org.mockito.Mockito.times;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 //@WebMvcTest(controllers = EmployeeController.class)
 //@AutoConfigureMockMvc(addFilters = false)
@@ -71,7 +75,6 @@ public class EmployeeControllerTest {
     ObjectMapper om = JsonMapper.builder()
             .addModule(new JavaTimeModule())
             .build();
-//    ObjectWriter objectWriter = om.writer();
 
     @Autowired
     TestRestTemplate restTemplate;
@@ -94,6 +97,7 @@ public class EmployeeControllerTest {
     Employee employee3 = Employee.of(3, "brian", "ham", LocalDate.of(1989, Month.AUGUST, 22), "brian@gmail.com", "4415890070", "Tech Sales", "Sales",
             "New York", LocalDate.of(2008, Month.NOVEMBER, 22), "Cam Frane");
 
+
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
@@ -101,56 +105,99 @@ public class EmployeeControllerTest {
     }
 
     @Test
-    public void getAllEmployees_success() throws Exception{
+    public void getAllEmployees_success() throws Exception {
         List<Employee> employees = new ArrayList<>(Arrays.asList(employee1, employee2, employee3));
-        Mockito.when(repository.findAll()).thenReturn(employees);
         Mockito.when(employeeService.getAllEmployees()).thenReturn(employees);
         ResultActions response = mockMvc.perform(get("/employees")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(om.writeValueAsString(employees)));
 
-        response.andExpect(MockMvcResultMatchers.status().isOk())
+        response.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(3)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].firstName", CoreMatchers.is(employees.get(1).getFirstName())));
     }
 
     @Test
-    public void getEmployeeById_success() throws Exception{
-        Mockito.when(repository.findByEmployeeId(employee1.getEmployeeId())).thenReturn(Optional.ofNullable(employee1));
+    public void getAllEmployeesNoneAdded_success() throws Exception {
+        List<Employee> employees = new ArrayList<>(Arrays.asList());
+        Mockito.when(employeeService.getAllEmployees()).thenReturn(employees);
+        ResultActions response = mockMvc.perform(get("/employees")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(om.writeValueAsString(employees)));
+
+        response.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(0)));
+    }
+
+
+    @Test
+    public void getEmployeeById_success() throws Exception {
+//        Mockito.when(repository.findByEmployeeId(employee1.getEmployeeId())).thenReturn(Optional.ofNullable(employee1));
         Mockito.when(employeeService.getEmployeeById(employee1.getEmployeeId())).thenReturn(employee1);
         ResultActions response = mockMvc.perform(get("/employees/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(om.writeValueAsString(employee1)));
 
-        response.andExpect(MockMvcResultMatchers.status().isOk())
+        response.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.firstName", CoreMatchers.is(employee1.getFirstName())));
     }
 
     @Test
-    public void getEmployeeById_notFound() throws Exception {
-        Mockito.when(repository.findByEmployeeId(employee1.getEmployeeId())).thenReturn(Optional.ofNullable(employee1));
-        Mockito.when(employeeService.getEmployeeById(employee1.getEmployeeId())).thenReturn(employee1);
-        ResultActions response = mockMvc.perform(get("/employees/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(om.writeValueAsString(employee1)));
-
-        response.andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.firstName", CoreMatchers.is(employee1.getFirstName())));
+    public void getEmployeeById_notFound() {
+        Mockito.when(employeeService.getEmployeeById(10)).thenThrow(new RequestException(RequestErrorResponse.ID_NOT_FOUND));
+        Assertions.assertThatThrownBy(() ->
+                        mockMvc.perform(get("/employees/10")).andExpect(status().isNotFound()))
+                .hasCause(new RequestException(null));
     }
 
 
+    @Test
+    public void deleteEmployeeById_success() throws Exception {
+        Mockito.doNothing().when(employeeService).deleteEmployeeById(1);
+        ResultActions response = mockMvc.perform(delete("/employees/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(om.writeValueAsString(employee1)));
 
+        response.andExpect(status().isOk());
+        Mockito.verify(employeeService, times(1)).deleteEmployeeById(1);
+    }
 
-//    @Test
-//    void shouldCreateNewEmployee() {
-//        Employee newEmployee = new Employee()
-//    }
-//
-//    @Test
-//    void shouldReturnEmployeesList() {
-//        ResponseEntity<Employee[]> response = restTemplate.getForEntity("/employees", Employee[].class);
-//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-//
-//    }
+    @Test
+    public void postNewEmployee_success() throws Exception {
+        Mockito.when(employeeService.createNewEmployee(employee1)).thenReturn(employee1);
+        ResultActions response = mockMvc.perform(post("/employees")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(om.writeValueAsString(employee1)));
+        response.andExpect(status().isCreated());
+    }
+
+    @Test
+    public void postNewEmployee_methodArgumentNotValidException() throws Exception {
+        Mockito.when(employeeService.createNewEmployee(employee1)).thenReturn(employee1);
+        ResultActions response = mockMvc.perform(post("/employees")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(om.writeValueAsString(employee1)));
+        response.andExpect(status().isCreated());
+    }
+
+    @Test
+    public void putNewEmployee_success() throws Exception {
+        Mockito.when(employeeService.updateEmployee(employee1.getEmployeeId(), employee1)).thenReturn(employee1);
+        ResultActions response = mockMvc.perform(put("/employees/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(om.writeValueAsString(employee1)));
+        response.andExpect(status().isOk());
+    }
+
+    @Test
+    public void putNewEmployee_methodNotAllowed() throws Exception {
+        ResultActions response = mockMvc.perform(put("/employees")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(om.writeValueAsString(employee1)));
+        response.andExpect(status().isMethodNotAllowed());
+    }
 
 }
+
+
+

@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,6 +43,12 @@ public class EmployeeControllerAdvice {
         return this.makeErrorResponse(HttpStatus.BAD_REQUEST, error);
     }
 
+    @ExceptionHandler({MethodArgumentTypeMismatchException.class})
+    public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(
+            ConstraintViolationException ex, HttpServletRequest httpServletRequest) {
+        ErrorResponse error = new ErrorResponse(400, "Bad Request. There was a type mismatch");
+        return this.makeErrorResponse(HttpStatus.BAD_REQUEST, error);
+    }
 
 
     /* Custom Exceptions */
