@@ -10,16 +10,20 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.employeeapp.employee.model.Employee;
 import com.employeeapp.employee.repository.EmployeeRepository;
 import com.employeeapp.employee.service.EmployeeService;
+import org.springframework.web.server.ResponseStatusException;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -40,22 +44,20 @@ public class EmployeeServiceTest {
             "New York", LocalDate.of(2008, Month.NOVEMBER, 22), "Cam Frane");
 
 
-
-
-
     @Test
     public void getAllEmployeesTest() {
         when(repository.findAll()).thenReturn(Stream
                 .of(employee1, Employee.of(1, "phillip", "nguyen", LocalDate.of(1966, Month.DECEMBER, 5), "john@gmail.com", "4429557115", "Software Engineer", "Information Technology",
-                                "Baltimore", LocalDate.of(1999, Month.AUGUST, 1), "John Doe"))
+                        "Baltimore", LocalDate.of(1999, Month.AUGUST, 1), "John Doe"))
                 .collect(Collectors.toList()));
         List<Employee> employees = employeeService.getAllEmployees();
         assertNotNull(employees);
         assertEquals(2, employees.size());
     }
 
+
     @Test
-    public void updateEmployeeTest() throws CloneNotSupportedException{
+    public void updateEmployeeTest() {
         Employee employee = Employee.of(1, "phillip", "nguyen", LocalDate.of(1966, Month.DECEMBER, 5), "john@gmail.com", "4429557115", "Software Engineer", "Information Technology",
                 "Baltimore", LocalDate.of(1999, Month.AUGUST, 1), "John Doe");
         when(repository.save(employee)).thenReturn(employee);
@@ -86,11 +88,24 @@ public class EmployeeServiceTest {
     @Test
     public void getEmployeeById() {
         long id = 1;
-        when(repository.findByEmployeeId(1)).thenReturn(Optional.ofNullable(Employee.of(1, "phillip", "nguyen", LocalDate.of(1966, Month.DECEMBER, 5), "john@gmail.com", "4429557115", "Software Engineer", "Information Technology",
-                "Baltimore", LocalDate.of(1999, Month.AUGUST, 1), "John Doe")));
+        when(repository.findByEmployeeId(1)).thenReturn(Optional.ofNullable(employee1));
         when(repository.existsById(id)).thenReturn(true);
         Employee employee = employeeService.getEmployeeById(id);
         assertNotNull(employee);
+    }
+
+    @Test(expected = ResponseStatusException.class)
+    public void getEmployeeById_idNotFound() {
+        long id = 1;
+        when(repository.findByEmployeeId(1)).thenReturn(Optional.ofNullable(employee1));
+        when(repository.existsById(id)).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Employee with id: %d was not found", id)));
+        Employee employee = employeeService.getEmployeeById(id);
+    }
+
+    @Test(expected = Exception.class)
+    public void jpaRepositoryError() {
+        when(repository.findAll()).thenThrow(new RuntimeException());
+        employeeService.getAllEmployees();
     }
 
     @Test

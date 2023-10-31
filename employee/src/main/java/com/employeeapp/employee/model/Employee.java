@@ -21,10 +21,8 @@ import java.time.LocalDate;
 
 
 @Entity
-@Table(name = "employees")
-@Getter
-@Setter
 @Data
+@Table(name = "employees")
 @AllArgsConstructor(staticName = "of")
 @NoArgsConstructor
 @ApiModel(description = "Employee Model")

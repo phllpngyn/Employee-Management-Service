@@ -1,16 +1,20 @@
 package com.employeeapp.employee.model;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
+@Data
+@AllArgsConstructor
 @RequiredArgsConstructor
 public class ErrorResponse {
     @ApiModelProperty(notes = "Code for Error Response", name = "Error Response Code", required = true)
-    private final int code;
+    private int code;
 
     @ApiModelProperty(notes = "Message for Error Response", name = "Error Response Message", required = true)
-    private final String message;
+    private String message;
+
+    public ErrorResponse(String message) {
+        super();
+        this.message = message;
+    }
 }

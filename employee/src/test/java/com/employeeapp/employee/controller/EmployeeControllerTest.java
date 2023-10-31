@@ -67,7 +67,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @RunWith(MockitoJUnitRunner.class)
-@SpringBootTest(webEnvironment=SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest()
 public class EmployeeControllerTest {
 
     private MockMvc mockMvc;
@@ -75,9 +75,6 @@ public class EmployeeControllerTest {
     ObjectMapper om = JsonMapper.builder()
             .addModule(new JavaTimeModule())
             .build();
-
-    @Autowired
-    TestRestTemplate restTemplate;
 
     @Mock
     private EmployeeRepository repository;
@@ -158,7 +155,8 @@ public class EmployeeControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(om.writeValueAsString(employee1)));
 
-        response.andExpect(status().isOk());
+        response.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$", CoreMatchers.is(1)));
         Mockito.verify(employeeService, times(1)).deleteEmployeeById(1);
     }
 
@@ -186,7 +184,8 @@ public class EmployeeControllerTest {
         ResultActions response = mockMvc.perform(put("/employees/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(om.writeValueAsString(employee1)));
-        response.andExpect(status().isOk());
+        response.andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$", CoreMatchers.is(1)));;
     }
 
     @Test
