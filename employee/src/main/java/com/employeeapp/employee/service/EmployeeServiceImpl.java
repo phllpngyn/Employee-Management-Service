@@ -1,9 +1,6 @@
 package com.employeeapp.employee.service;
 
 import com.employeeapp.employee.model.Employee;
-import com.employeeapp.employee.model.NoEmployeeExistsForIdException;
-import com.employeeapp.employee.model.RequestException;
-import com.employeeapp.employee.model.RequestErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
@@ -13,10 +10,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import com.employeeapp.employee.repository.EmployeeRepository;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,7 +72,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-//    @Transactional
+    @Transactional
     public void deleteEmployeeById(long id) {
         if (checkIdExists(id)) {
             try {
@@ -107,7 +103,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     public boolean checkIdExists(long id) throws ResponseStatusException {
         if (!employeeRepository.existsById(id)) {
-            log.warn("There was issue finding id: " + id);
+            log.warn("There was an issue finding id: " + id);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Employee with id: %d was not found", id));
         }
         return true;

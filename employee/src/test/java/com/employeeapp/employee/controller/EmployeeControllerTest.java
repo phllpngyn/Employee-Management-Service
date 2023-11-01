@@ -20,6 +20,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import com.employeeapp.employee.model.Employee;
@@ -35,6 +36,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.server.MethodNotAllowedException;
+import org.springframework.web.server.ResponseStatusException;
 
 
 import java.time.LocalDate;
@@ -140,15 +143,6 @@ public class EmployeeControllerTest {
     }
 
     @Test
-    public void getEmployeeById_notFound() {
-        Mockito.when(employeeService.getEmployeeById(10)).thenThrow(new RequestException(RequestErrorResponse.ID_NOT_FOUND));
-        Assertions.assertThatThrownBy(() ->
-                        mockMvc.perform(get("/employees/10")).andExpect(status().isNotFound()))
-                .hasCause(new RequestException(null));
-    }
-
-
-    @Test
     public void deleteEmployeeById_success() throws Exception {
         Mockito.doNothing().when(employeeService).deleteEmployeeById(1);
         ResultActions response = mockMvc.perform(delete("/employees/1")
@@ -195,7 +189,6 @@ public class EmployeeControllerTest {
                 .content(om.writeValueAsString(employee1)));
         response.andExpect(status().isMethodNotAllowed());
     }
-
 }
 
 

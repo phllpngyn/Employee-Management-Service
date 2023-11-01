@@ -36,11 +36,13 @@ public class Employee {
 
 
     @NotBlank(message = "First Name shouldn't be null")
+    @Pattern(regexp="^[a-zA-Z\\s]+$",message = "Invalid Input for first name")
     @Column(name = "first_name")
     @ApiModelProperty(name = "firstName", required = true, value = "Kyle")
     private String firstName;
 
     @NotBlank(message = "Last Name shouldn't be null")
+    @Pattern(regexp="^[a-zA-Z\\s]+$",message = "Invalid Input for last name")
     @Column(name = "last_name")
     @ApiModelProperty(name = "lastName", required = true, value = "Long")
     private String lastName;
@@ -65,16 +67,19 @@ public class Employee {
     private String phone;
 
     @NotNull(message = "Job Title can't be null")
+    @Pattern(regexp="^[a-zA-Z\\s]+$",message = "Invalid Input for job title")
     @Column(name = "job_title")
     @ApiModelProperty(name = "jobTitle", required = true, value = "tech sales")
     private String jobTitle;
 
     @NotNull(message = "Department can't be null")
+    @Pattern(regexp="^[a-zA-Z\\s]+$",message = "Invalid Input for department")
     @Column(name = "department")
     @ApiModelProperty(name = "department", required = true, value = "IT")
     private String department;
 
     @NotNull(message = "Location can't be null")
+    @Pattern(regexp="^[a-zA-Z,\\s]+$",message = "Invalid Input for location")
     @Column(name = "location")
     @ApiModelProperty(name = "location", required = true, value = "Washington")
     private String location;
@@ -85,9 +90,8 @@ public class Employee {
     @ApiModelProperty(name = "startDate", required = true, value = "2020-10-21")
     private LocalDate startDate;
 
-    @NotNull(message = "Reporting Manager can't be null")
+    @NotNull
     @Column(name = "reporting_manager")
-    @ApiModelProperty(name = "reportingManager", required = true, value = "John Doe")
-    private String reportingManager;
-
+    @ApiModelProperty(name = "reportingManager", required = true, value = "3")
+    private int reportingManager;
 }

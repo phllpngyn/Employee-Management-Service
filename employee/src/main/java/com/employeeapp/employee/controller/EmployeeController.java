@@ -2,16 +2,22 @@ package com.employeeapp.employee.controller;
 
 import com.employeeapp.employee.model.Employee;
 import com.employeeapp.employee.model.ErrorResponse;
+import com.employeeapp.employee.model.ErrorResponse2;
 import com.employeeapp.employee.model.PageBody;
 import com.employeeapp.employee.service.EmployeeService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.util.UriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
@@ -47,7 +53,7 @@ public class EmployeeController {
             @ApiResponse(code = 500, message = "INTERNAL SERVER ERROR", response = ErrorResponse.class),
     })
     @GetMapping(path = "/page")
-    private ResponseEntity<Page<Employee>> getAllEmployeesByPage(@RequestBody PageBody pageBody) {
+     private ResponseEntity<Page<Employee>> getAllEmployeesByPage(@RequestBody PageBody pageBody) {
         return ResponseEntity.ok(this.employeeService.getAllEmployeesByPage(pageBody.getPageNo(), pageBody.getPageSize(),
                 pageBody.getSortField(), pageBody.getSortDirection()));
     }
@@ -103,8 +109,10 @@ public class EmployeeController {
     })
     @ApiOperation(value = "Deleting Employee")
     @DeleteMapping(path="/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     private ResponseEntity<Long> deleteEmployee(@PathVariable @Valid long id) {
         this.employeeService.deleteEmployeeById(id);
         return ResponseEntity.ok(id);
     }
+
 }
