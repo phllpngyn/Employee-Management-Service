@@ -1,21 +1,11 @@
 package com.employeeapp.employee.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import javax.validation.constraints.*;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
-import net.bytebuddy.asm.Advice;
-import org.hibernate.annotations.NotFound;
-
 import javax.persistence.*;
-
-import java.io.Serializable;
 import java.time.LocalDate;
 
 

@@ -1,20 +1,36 @@
 package com.employeeapp.employee.model;
 
-import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
-@Data
-@AllArgsConstructor
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+@Getter
+@Setter
 @RequiredArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErrorResponse {
-    @ApiModelProperty(notes = "Code for Error Response", name = "Error Response Code", required = true)
-    private int code;
+    private final int status;
+    private final String message;
+    private String stackTrace;
+    private List<ValidationError> errors;
 
-    @ApiModelProperty(notes = "Message for Error Response", name = "Error Response Message", required = true)
-    private String message;
+    @Getter
+    @Setter
+    @RequiredArgsConstructor
+    private static class ValidationError {
+        private final String field;
+        private final String message;
+    }
 
-    public ErrorResponse(String message) {
-        super();
-        this.message = message;
+    public void addValidationError(String field, String message){
+        if(Objects.isNull(errors)){
+            errors = new ArrayList<>();
+        }
+        errors.add(new ValidationError(field, message));
     }
 }

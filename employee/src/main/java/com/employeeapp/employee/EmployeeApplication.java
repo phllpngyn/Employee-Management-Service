@@ -5,8 +5,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-
 import javax.sql.DataSource;
 import java.sql.SQLException;
 

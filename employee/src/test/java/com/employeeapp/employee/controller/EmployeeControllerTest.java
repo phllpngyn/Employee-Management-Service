@@ -3,13 +3,9 @@ package com.employeeapp.employee.controller;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.Matchers.hasSize;
 
-import com.employeeapp.employee.model.RequestErrorResponse;
-import com.employeeapp.employee.model.RequestException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,26 +14,19 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import com.employeeapp.employee.model.Employee;
 import com.employeeapp.employee.repository.EmployeeRepository;
 import com.employeeapp.employee.service.EmployeeService;
 import org.hamcrest.CoreMatchers;
-import org.mockito.Mockito;
 
 
-
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.server.MethodNotAllowedException;
-import org.springframework.web.server.ResponseStatusException;
 
 
 import java.time.LocalDate;
@@ -50,23 +39,6 @@ import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-//@WebMvcTest(controllers = EmployeeController.class)
-//@AutoConfigureMockMvc(addFilters = false)
-//@ExtendWith(MockitoExtension.class)
-//public class EmployeeControllerTest {
-//    @Autowired
-//    private MockMvc mockMvc;
-//
-//    @MockBean
-//    private EmployeeService employeeService;
-//
-//    @Autowired
-//    private ObjectMapper objectMapper;
-//
-//    @Test
-//}
-//
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -90,12 +62,12 @@ public class EmployeeControllerTest {
 
 
     Employee employee1 = Employee.of(1, "phillip", "nguyen", LocalDate.of(1966, Month.DECEMBER, 5), "phillip@gmail.com", "4429557115", "Software Engineer", "Information Technology",
-            "Baltimore", LocalDate.of(1999, Month.AUGUST, 1), "John Doe");
+            "Baltimore", LocalDate.of(1999, Month.AUGUST, 1), 10);
     Employee employee2 = Employee.of(2, "john", "card", LocalDate.of(2001, Month.AUGUST, 20), "john@gmail.com", "7114454355", "Software Engineer", "Information Technology",
-            "Washington", LocalDate.of(2010, Month.JANUARY, 2), "John Doe");
+            "Washington", LocalDate.of(2010, Month.JANUARY, 2), 10);
 
     Employee employee3 = Employee.of(3, "brian", "ham", LocalDate.of(1989, Month.AUGUST, 22), "brian@gmail.com", "4415890070", "Tech Sales", "Sales",
-            "New York", LocalDate.of(2008, Month.NOVEMBER, 22), "Cam Frane");
+            "New York", LocalDate.of(2008, Month.NOVEMBER, 22), 10);
 
 
     @Before

@@ -179,7 +179,7 @@ definitions:
         type: string
         description: Employee's start date
       managerReporting:
-        type: string
+        type: integer
         description: Employee's reporting manager
 
   EmployeeResponse:

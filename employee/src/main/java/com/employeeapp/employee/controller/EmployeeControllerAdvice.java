@@ -9,14 +9,8 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import org.springframework.web.servlet.NoHandlerFoundException;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 
 @Slf4j
@@ -25,8 +19,8 @@ public class EmployeeControllerAdvice{
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    public ResponseEntity<ErrorResponse2> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
-        ErrorResponse2 errorResponse = new ErrorResponse2(
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.UNPROCESSABLE_ENTITY.value(),
                 "Validation error. Check 'errors' field for details."
         );
@@ -38,20 +32,20 @@ public class EmployeeControllerAdvice{
     }
 
     @ExceptionHandler({ConstraintViolationException.class})
-    public ResponseEntity<ErrorResponse2> handleConstraintViolationException(
+    public ResponseEntity<ErrorResponse> handleConstraintViolationException(
             ConstraintViolationException ex) {
-        ErrorResponse2 error = new ErrorResponse2(400, ex.getLocalizedMessage());
+        ErrorResponse error = new ErrorResponse(400, ex.getLocalizedMessage());
         return this.makeErrorResponse(HttpStatus.BAD_REQUEST, error);
     }
 
     @ExceptionHandler({MethodArgumentTypeMismatchException.class})
-    public ResponseEntity<ErrorResponse2> handleMethodArgumentTypeMismatchException() {
-        ErrorResponse2 error = new ErrorResponse2(400, "Bad Request. There was a type mismatch");
+    public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException() {
+        ErrorResponse error = new ErrorResponse(400, "Bad Request. There was a type mismatch");
         return this.makeErrorResponse(HttpStatus.BAD_REQUEST, error);
     }
 
     /* Helper Functions */
-    private ResponseEntity<ErrorResponse2> makeErrorResponse(HttpStatus httpStatus, ErrorResponse2 error) {
+    private ResponseEntity<ErrorResponse> makeErrorResponse(HttpStatus httpStatus, ErrorResponse error) {
         return ResponseEntity.status(httpStatus).contentType(MediaType.APPLICATION_JSON).body(error);
     }
 
