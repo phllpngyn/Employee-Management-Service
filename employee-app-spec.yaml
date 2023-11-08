@@ -180,7 +180,11 @@ definitions:
         description: Employee's start date
       managerReporting:
         type: integer
+<<<<<<< HEAD
         description: Employee's reporting manager id
+=======
+        description: Employee's reporting manager
+>>>>>>> 5e97c92e05bf82d267521bae8ff3d315ffbe99e7
 
   EmployeeResponse:
     type: object
