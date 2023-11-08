@@ -16,11 +16,13 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.Optional;
 
+
 @Slf4j
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
     private EmployeeRepository employeeRepository;
+//    final List<String> listOfEligibleLocation = new List<String>(['washington', 'new york'];
 
     public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
@@ -48,6 +50,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Employee createNewEmployee(Employee employee) {
         try {
+
+//            listOfEligibleLocations.contains(employee.getLocation())
             return this.employeeRepository.save(employee);
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,

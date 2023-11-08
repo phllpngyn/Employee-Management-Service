@@ -21,7 +21,7 @@ import javax.validation.ConstraintViolationException;
 
 @Slf4j
 @ControllerAdvice
-public class EmployeeControllerAdvice{
+public class EmployeeControllerAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
@@ -37,12 +37,6 @@ public class EmployeeControllerAdvice{
         return ResponseEntity.unprocessableEntity().body(errorResponse);
     }
 
-    @ExceptionHandler({ConstraintViolationException.class})
-    public ResponseEntity<ErrorResponse2> handleConstraintViolationException(
-            ConstraintViolationException ex) {
-        ErrorResponse2 error = new ErrorResponse2(400, ex.getLocalizedMessage());
-        return this.makeErrorResponse(HttpStatus.BAD_REQUEST, error);
-    }
 
     @ExceptionHandler({MethodArgumentTypeMismatchException.class})
     public ResponseEntity<ErrorResponse2> handleMethodArgumentTypeMismatchException() {
@@ -54,13 +48,5 @@ public class EmployeeControllerAdvice{
     private ResponseEntity<ErrorResponse2> makeErrorResponse(HttpStatus httpStatus, ErrorResponse2 error) {
         return ResponseEntity.status(httpStatus).contentType(MediaType.APPLICATION_JSON).body(error);
     }
-
-//    private ResponseEntity<ErrorResponse2> buildErrorResponse(Exception exception, String message, HttpStatus httpStatus, WebRequest request) {
-//        ErrorResponse2 errorResponse = new ErrorResponse2(
-//                httpStatus.value(),
-//                exception.getMessage()
-//        );
-//        return ResponseEntity.status(httpStatus).body(errorResponse);
-//    }
 
 }
